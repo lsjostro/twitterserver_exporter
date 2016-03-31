@@ -39,6 +39,7 @@ var httpClient = http.Client{
 var r = strings.NewReplacer("!", "-",
 	",", "-",
 	".", "_",
+	"$", "_",
 	"/", ":")
 
 type exporter struct {
