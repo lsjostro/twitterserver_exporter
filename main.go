@@ -5,6 +5,7 @@ import (
 	"flag"
 	"net"
 	"net/http"
+	"regexp"
 	"strings"
 	"sync"
 	"time"
@@ -36,11 +37,7 @@ var httpClient = http.Client{
 	},
 }
 
-var r = strings.NewReplacer("!", "-",
-	",", "-",
-	".", "_",
-	"$", "_",
-	"/", ":")
+var rp = regexp.MustCompile("[^a-zA-Z0-9_:]")
 
 type exporter struct {
 	sync.Mutex
@@ -86,7 +83,7 @@ func (e *exporter) Collect(ch chan<- prometheus.Metric) {
 }
 
 func parseMetric(name string, value float64) (metric prometheus.Metric) {
-	parsedKey := r.Replace(name)
+	parsedKey := rp.ReplaceAllString(name, "_")
 	metric = prometheus.MustNewConstMetric(
 		prometheus.NewDesc(
 			prometheus.BuildFQName(namespace, "", parsedKey), "",
