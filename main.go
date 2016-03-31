@@ -83,7 +83,8 @@ func (e *exporter) Collect(ch chan<- prometheus.Metric) {
 }
 
 func parseMetric(name string, value float64) (metric prometheus.Metric) {
-	parsedKey := rp.ReplaceAllString(name, "_")
+	parsedKey := strings.Replace(name, "/", ":", -1)
+	parsedKey = rp.ReplaceAllString(parsedKey, "_")
 	metric = prometheus.MustNewConstMetric(
 		prometheus.NewDesc(
 			prometheus.BuildFQName(namespace, "", parsedKey), "",
